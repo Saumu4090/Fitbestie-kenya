@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6d3a68">
+<meta name="description" content="Your gentle Kenyan food and fitness tracker.">
+<link rel="manifest" href="manifest.json">
+<title>FitBestie Kenya</title>
+<style>
+:root{--plum:#6d3a68;--plum2:#8b5585;--cream:#fffaf5;--ink:#2f2930;--muted:#766d77;--pink:#f4e7f1;--green:#e5f3e8;--line:#eadfe7;--white:#fff;--shadow:0 6px 24px #44233a12}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}header{background:linear-gradient(135deg,var(--plum),#a15a83);color:white;padding:24px 18px 20px;border-radius:0 0 24px 24px}header h1{font-size:26px;margin:0 0 4px}header p{margin:0;opacity:.9;font-size:14px}.wrap{max-width:900px;margin:auto;padding:14px 14px 36px}.date-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}.date-row input{max-width:170px}.tabs{display:flex;gap:7px;overflow:auto;padding:4px 0 12px}.tab{border:1px solid var(--line);background:white;color:var(--plum);padding:10px 13px;border-radius:999px;white-space:nowrap;font-weight:650}.tab.active{background:var(--plum);color:white;border-color:var(--plum)}.panel{display:none}.panel.active{display:block}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:16px;margin:0 0 13px;box-shadow:var(--shadow)}h2{font-size:19px;margin:0 0 12px}h3{font-size:16px;margin:0 0 8px}.muted{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{background:#fcf6fb;border-radius:14px;padding:13px}.stat strong{display:block;font-size:23px;color:var(--plum)}.stat span{font-size:12px;color:var(--muted)}label{display:block;font-size:13px;font-weight:650;margin:9px 0 5px}input,select,textarea{font:inherit;width:100%;border:1px solid #d9cbd7;border-radius:10px;padding:11px;background:white;color:var(--ink)}button{font:inherit;cursor:pointer}.primary,.secondary,.danger{border:0;border-radius:11px;padding:11px 14px;font-weight:700}.primary{background:var(--plum);color:white}.secondary{background:var(--pink);color:var(--plum)}.danger{background:#fff0ee;color:#a52f2f}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.food-results{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:12px;margin-top:8px}.food-option{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center}.food-option:last-child{border-bottom:0}.food-option button{flex-shrink:0}.log-item{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}.log-item:last-child{border:0}.log-item strong{display:block}.log-item small{color:var(--muted)}.progress{height:9px;background:#f0e8ef;border-radius:99px;overflow:hidden;margin-top:7px}.progress div{height:100%;background:var(--plum2);width:0;border-radius:99px}.notice{background:#fff5d9;border-radius:12px;padding:11px;font-size:13px;margin-top:10px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.empty{color:var(--muted);font-size:14px;padding:10px 0}.footer{text-align:center;color:var(--muted);font-size:12px;padding:16px 0}.hidden{display:none!important}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.wrap{padding:20px}.main-columns{display:grid;grid-template-columns:1fr 1fr;gap:14px}.main-columns .card{margin-bottom:0}}
+</style>
+</head>
+<body>
+<header><h1>💜 FitBestie Kenya</h1><p>Your gentle food, movement & progress diary — no perfection required.</p></header>
+<div class="wrap">
+  <div class="date-row"><div><strong id="dayGreeting">Today's check-in</strong><div class="muted">Your entries stay on this device.</div></div><input id="day" type="date" aria-label="Diary date"></div>
+  <nav class="tabs" aria-label="Tracker sections">
+    <button class="tab active" data-tab="home">Today</button><button class="tab" data-tab="food">Food diary</button><button class="tab" data-tab="movement">Movement</button><button class="tab" data-tab="progress">Progress</button><button class="tab" data-tab="settings">Settings & backup</button>
+  </nav>
+  <section class="panel active" id="home">
+    <div class="grid">
+      <div class="stat"><span>Calories eaten</span><strong id="calStat">0</strong><span id="calGoalText">of 2,068 kcal</span><div class="progress"><div id="calBar"></div></div></div>
+      <div class="stat"><span>Protein</span><strong id="proteinStat">0 g</strong><span id="proteinGoalText">of 80 g</span><div class="progress"><div id="proteinBar"></div></div></div>
+      <div class="stat"><span>Water</span><strong id="waterStat">0 ml</strong><span>Tap to log a glass below</span></div>
+      <div class="stat"><span>Steps</span><strong id="stepsStat">0</strong><span id="workoutStat">No workout logged yet</span></div>
+    </div>
+    <div class="main-columns" style="margin-top:13px">
+      <div class="card"><h2>🍽️ Today's food</h2><div id="todayFood"></div><div class="actions"><button class="primary" data-goto="food">+ Log food</button></div></div>
+      <div class="card"><h2>💧 Quick water log</h2><p class="muted">Choose your cup size, then tap to add it.</p><div class="two"><div><label for="cupSize">Cup / bottle</label><select id="cupSize"><option value="250">Glass · 250 ml</option><option value="350">Cup · 350 ml</option><option value="500">Bottle · 500 ml</option><option value="750">Bottle · 750 ml</option><option value="1000">Bottle · 1 litre</option></select></div><div style="display:flex;align-items:end"><button class="primary" id="addWater" style="width:100%">+ Add water</button></div></div><div class="actions"><button class="secondary" id="undoWater">Undo last water</button></div><p class="muted">Hydration needs vary; use thirst and your clinician's advice if you have fluid restrictions.</p></div>
+    </div>
+    <div class="card" style="margin-top:13px"><h2>🌷 Gentle reminder</h2>One meal, one walk, or one check-in is enough to keep building consistency. Homemade food estimates are approximate — your recipe and serving size matter.</div>
+  </section>
+  <section class="panel" id="food">
+    <div class="card"><h2>Find a Kenyan food</h2><p class="muted">Search a food, then choose a familiar portion. Values are estimates for a typical serving, not laboratory measurements.</p><label for="foodSearch">Search foods</label><input id="foodSearch" placeholder="Try ugali, chapati, ndengu, milk…" autocomplete="off"><div id="foodResults" class="food-results"></div><div id="selectedFood" class="hidden"><h3 id="selectedName" style="margin-top:14px"></h3><div class="two"><div><label for="portion">Portion style</label><select id="portion"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="unit">One listed portion</option></select></div><div><label for="quantity">Number of portions</label><input id="quantity" type="number" min="0.25" max="20" step="0.25" value="1"></div></div><p id="foodEstimate" class="muted"></p><label for="meal">Meal</label><select id="meal"><option>Breakfast</option><option>Lunch</option><option>Supper</option><option>Snack</option><option>Drink</option></select><div class="actions"><button class="primary" id="logFood">Add to diary</button><button class="secondary" id="cancelFood">Cancel</button></div></div></div>
+    <div class="card"><h2>📝 Logged today</h2><div id="foodLog"></div></div>
+    <div class="notice">Tip: For homemade stew, oil and serving size can change calories a lot. Choose the closest match, and keep it consistent rather than chasing perfect precision.</div>
+  </section>
+  <section class="panel" id="movement">
+    <div class="card"><h2>👟 Steps & walking</h2><label for="steps">Steps today</label><input id="steps" type="number" min="0" step="100" placeholder="e.g. 5,000"><label for="walk">Walking / other movement notes</label><input id="walk" placeholder="e.g. 35-minute walk, errands"><div class="actions"><button class="primary" id="saveSteps">Save movement</button></div></div>
+    <div class="card"><h2>💪 Workout log</h2><label for="workoutName">Workout / activity</label><input id="workoutName" placeholder="e.g. Caroline Girvan — Fuel Day 12"><div class="two"><div><label for="workoutMinutes">Minutes</label><input id="workoutMinutes" type="number" min="0" step="5" placeholder="30"></div><div><label for="effort">How did it feel?</label><select id="effort"><option>Gentle</option><option selected>Moderate</option><option>Challenging</option><option>Rest / recovery</option></select></div></div><div class="actions"><button class="primary" id="saveWorkout">Save workout</button></div><div id="movementLog"></div></div>
+  </section>
+  <section class="panel" id="progress">
+    <div class="card"><h2>⚖️ Weight & measurements</h2><p class="muted">Log only when it feels helpful. Trends matter more than a single number.</p><div class="two"><div><label for="weight">Weight (kg)</label><input id="weight" type="number" min="20" max="400" step="0.1" placeholder="Optional"></div><div><label for="waist">Waist (cm)</label><input id="waist" type="number" min="20" max="250" step="0.5" placeholder="Optional"></div><div><label for="hip">Hips (cm)</label><input id="hip" type="number" min="20" max="250" step="0.5" placeholder="Optional"></div><div><label for="notes">Notes</label><input id="notes" placeholder="Energy, cycle, fit of clothes…"></div></div><div class="actions"><button class="primary" id="saveProgress">Save check-in</button></div></div>
+    <div class="card"><h2>📈 Previous check-ins</h2><div id="progressLog"></div></div>
+  </section>
+  <section class="panel" id="settings">
+    <div class="card"><h2>🎯 Daily targets</h2><p class="muted">Starting targets are editable. These are planning aids, not medical advice.</p><div class="two"><div><label for="calGoal">Calories (kcal)</label><input id="calGoal" type="number" min="1000" max="5000" step="50" value="2068"></div><div><label for="proteinGoal">Protein (g)</label><input id="proteinGoal" type="number" min="20" max="250" step="5" value="80"></div></div><div class="actions"><button class="primary" id="saveGoals">Save targets</button></div></div>
+    <div class="card"><h2>🔐 Your data & backup</h2><p>Food, workouts and check-ins are saved locally in this browser on this device. They are not uploaded to an account. Clearing browser data or uninstalling/resetting the browser can erase them, so export a backup regularly.</p><div class="actions"><button class="primary" id="exportData">Export backup</button><label class="secondary" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer">Import backup<input id="importFile" type="file" accept="application/json" class="hidden"></label><button class="danger" id="clearData">Clear all data</button></div><p class="muted" id="backupStatus"></p></div>
+    <div class="card"><h2>About food estimates</h2><p class="muted">Starter estimates are approximate and can vary with ingredients, oil, recipe, brand and serving size. Packaged foods should use their label when available. This tracker is for general self-monitoring, not diagnosis or treatment.</p></div>
+  </section>
+  <div class="footer">Made with 💜 for your real life. Small steps count.</div>
+</div>
+<script>
+const foods = [
+{name:"Ugali (maize meal)",unit:"1 medium fist-sized piece",small:[110,2.5],medium:[180,4],large:[280,6]},
+{name:"Chapati (plain, Kenyan)",unit:"1 medium chapati",small:[180,4],medium:[250,5],large:[330,7]},
+{name:"Mandazi",unit:"1 medium piece",small:[130,2],medium:[200,3],large:[280,4]},
+{name:"Githeri (maize & beans)",unit:"1 cup",small:[220,10],medium:[300,13],large:[420,18]},
+{name:"Ndengu / green grams stew",unit:"1 cup",small:[180,10],medium:[260,14],large:[360,19]},
+{name:"Boiled beans",unit:"1 cup",small:[150,9],medium:[225,13],large:[300,17]},
+{name:"Sukuma wiki (cooked)",unit:"1 serving spoon",small:[25,1.5],medium:[50,2.5],large:[90,4]},
+{name:"Kunde / cowpea leaves",unit:"1 serving spoon",small:[35,2],medium:[65,4],large:[110,6]},
+{name:"Mukimo",unit:"1 cup",small:[180,4],medium:[280,6],large:[390,8]},
+{name:"Rice, cooked",unit:"1 cup",small:[130,2.5],medium:[205,4],large:[310,6]},
+{name:"Pilau",unit:"1 cup",small:[250,8],medium:[380,12],large:[520,17]},
+{name:"Potatoes, boiled",unit:"1 medium potato",small:[80,2],medium:[130,3],large:[210,5]},
+{name:"Sweet potato, boiled",unit:"1 medium piece",small:[90,2],medium:[150,3],large:[230,4]},
+{name:"Matoke / cooked plantain",unit:"1 cup",small:[150,2],medium:[220,3],large:[320,4]},
+{name:"Nyama choma (beef/goat)",unit:"palm-sized cooked portion",small:[180,22],medium:[280,30],large:[420,42]},
+{name:"Beef stew",unit:"1 cup",small:[180,16],medium:[280,24],large:[400,32]},
+{name:"Chicken, cooked",unit:"1 palm-sized portion",small:[140,22],medium:[230,32],large:[340,45]},
+{name:"Tilapia, cooked",unit:"1 medium fillet",small:[130,23],medium:[220,35],large:[320,48]},
+{name:"Egg, boiled",unit:"1 egg",small:[60,5],medium:[78,6.5],large:[95,8]},
+{name:"Sausage",unit:"1 piece",small:[100,5],medium:[160,8],large:[230,11]},
+{name:"Omena (cooked)",unit:"1 small serving",small:[70,8],medium:[130,14],large:[210,22]},
+{name:"Avocado",unit:"¼ medium avocado",small:[60,1],medium:[100,1.5],large:[160,2]},
+{name:"Banana",unit:"1 medium banana",small:[75,1],medium:[105,1.3],large:[135,1.7]},
+{name:"Orange",unit:"1 medium orange",small:[45,0.8],medium:[65,1.2],large:[90,1.7]},
+{name:"Mango",unit:"1 cup pieces",small:[60,0.5],medium:[100,1],large:[150,1.5]},
+{name:"Whole milk",unit:"1 glass (250 ml)",small:[90,4.5],medium:[150,8],large:[220,12]},
+{name:"Mala / fermented milk",unit:"1 glass (250 ml)",small:[90,5],medium:[150,8],large:[220,12]},
+{name:"Plain yoghurt",unit:"1 small cup",small:[80,4],medium:[130,7],large:[190,10]},
+{name:"Peanuts / groundnuts",unit:"small handful",small:[90,4],medium:[170,7],large:[260,11]},
+{name:"Bread",unit:"1 slice",small:[60,2],medium:[80,3],large:[110,4]},
+{name:"Tea with milk and sugar",unit:"1 mug",small:[40,1],medium:[90,2],large:[150,3]},
+{name:"Black tea, no sugar",unit:"1 mug",small:[0,0],medium:[2,0],large:[5,0]},
+{name:"Cooking oil",unit:"1 teaspoon",small:[40,0],medium:[40,0],large:[120,0]},
+{name:"Peanut butter",unit:"1 tablespoon",small:[45,2],medium:[95,4],large:[145,6]},
+{name:"Samosa",unit:"1 medium piece",small:[120,4],medium:[200,6],large:[300,9]}
+];
+const KEY="fitbestieKenya_v1";
+const todayISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+let state={logs:{},goals:{calories:2068,protein:80},progress:[]};
+let selected=null;
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==="object")state={...state,...s,goals:{...state.goals,...(s.goals||{})}}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));$("backupStatus").textContent="Saved on this device."}catch(e){$("backupStatus").textContent="Could not save: device storage may be full or blocked."}}
+function $(id){return document.getElementById(id)}
+function currentDay(){return $("day").value||todayISO()}
+function dayData(day=currentDay()){if(!state.logs[day])state.logs[day]={food:[],water:[],steps:0,walk:"",workouts:[]};return state.logs[day]}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function totalFood(){return dayData().food.reduce((a,f)=>({cal:a+f.cal,protein:a+f.protein}),{cal:0,protein:0})}
+function fmt(n){return Math.round(n*10)/10}
+function render(){
+ const d=dayData(),tot=totalFood();$("calStat").textContent=Math.round(tot.cal).toLocaleString();$("proteinStat").textContent=fmt(tot.protein)+" g";$("waterStat").textContent=d.water.reduce((a,b)=>a+b,0).toLocaleString()+" ml";$("stepsStat").textContent=(Number(d.steps)||0).toLocaleString();$("workoutStat").textContent=d.workouts.length?d.workouts.length+" activity logged":"No workout logged yet";
+ $("calGoalText").textContent="of "+Number(state.goals.calories).toLocaleString()+" kcal";$("proteinGoalText").textContent="of "+state.goals.protein+" g";$("calBar").style.width=Math.min(100,tot.cal/state.goals.calories*100)+"%";$("proteinBar").style.width=Math.min(100,tot.protein/state.goals.protein*100)+"%";
+ const foodHTML=d.food.length?d.food.map((f,i)=>`<div class="log-item"><div><strong>${esc(f.name)} × ${f.qty}</strong><small>${esc(f.meal)} · ${esc(f.portionLabel)} · ${Math.round(f.cal)} kcal · ${fmt(f.protein)} g protein</small></div><button class="danger" data-remove-food="${i}" aria-label="Remove ${esc(f.name)}">×</button></div>`).join(""):'<div class="empty">No food logged yet. Add your first meal when you are ready.</div>';
+ $("todayFood").innerHTML=foodHTML;$("foodLog").innerHTML=foodHTML;
+ $("movementLog").innerHTML=(d.walk?`<p><strong>Movement:</strong> ${esc(d.walk)}</p>`:"")+ (d.workouts.length?d.workouts.map((w,i)=>`<div class="log-item"><div><strong>${esc(w.name)}</strong><small>${w.minutes||0} min · ${esc(w.effort)}</small></div><button class="danger" data-remove-workout="${i}">×</button></div>`).join(""):'<div class="empty">No workout logged for this date.</div>');
+ $("steps").value=d.steps||"";$("walk").value=d.walk||"";
+ const ps=state.progress.filter(p=>p.date===currentDay());const p=ps[ps.length-1];$("weight").value=p?.weight??"";$("waist").value=p?.waist??"";$("hip").value=p?.hip??"";$("notes").value=p?.notes??"";
+ $("progressLog").innerHTML=state.progress.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,30).map(p=>`<div class="log-item"><div><strong>${esc(p.date)}</strong><small>${p.weight!==""&&p.weight!=null?"Weight "+esc(p.weight)+" kg · ":""}${p.waist!==""&&p.waist!=null?"Waist "+esc(p.waist)+" cm · ":""}${p.hip!==""&&p.hip!=null?"Hips "+esc(p.hip)+" cm · ":""}${esc(p.notes||"")}</small></div><button class="danger" data-remove-progress="${esc(p.id)}">×</button></div>`).join("")||'<div class="empty">Your check-ins will appear here.</div>';
+}
+function searchFoods(){const q=$("foodSearch").value.trim().toLowerCase();const matches=foods.filter(f=>f.name.toLowerCase().includes(q)).slice(0,18);$("foodResults").innerHTML=matches.map(f=>`<div class="food-option"><div><strong>${esc(f.name)}</strong><div class="muted">${esc(f.unit)} · ${f.medium[0]} kcal, ${f.medium[1]} g protein (medium)</div></div><button class="secondary" data-pick="${esc(f.name)}">Choose</button></div>`).join("")||'<div class="empty" style="padding:12px">No match yet. Try a shorter search or choose a similar food.</div>'}
+function updateEstimate(){if(!selected)return;const portion=$("portion").value;const val=selected[portion==="unit"?"medium":portion];const qty=Math.max(.25,Number($("quantity").value)||1);$("foodEstimate").textContent=`Estimated total: ${Math.round(val[0]*qty)} kcal · ${fmt(val[1]*qty)} g protein. Listed portion: ${selected.unit}.`;}
+document.addEventListener("click",e=>{
+ const tab=e.target.closest("[data-tab]");if(tab){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b===tab));document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===tab.dataset.tab));}
+ const go=e.target.closest("[data-goto]");if(go){const b=document.querySelector(`[data-tab="${go.dataset.goto}"]`);if(b)b.click();}
+ const pick=e.target.closest("[data-pick]");if(pick){selected=foods.find(f=>f.name===pick.dataset.pick);$("selectedFood").classList.remove("hidden");$("selectedName").textContent=selected.name;$("portion").value="medium";$("quantity").value=1;updateEstimate();}
+ const rm=e.target.closest("[data-remove-food]");if(rm){dayData().food.splice(Number(rm.dataset.removeFood),1);save();render();}
+ const rw=e.target.closest("[data-remove-workout]");if(rw){dayData().workouts.splice(Number(rw.dataset.removeWorkout),1);save();render();}
+ const rp=e.target.closest("[data-remove-progress]");if(rp){state.progress=state.progress.filter(p=>p.id!==rp.dataset.removeProgress);save();render();}
+});
+$("day").value=todayISO();$("day").addEventListener("change",()=>{render();if(!$("food").classList.contains("active")){}});
+$("foodSearch").addEventListener("input",searchFoods);$("portion").addEventListener("change",updateEstimate);$("quantity").addEventListener("input",updateEstimate);
+$("logFood").addEventListener("click",()=>{if(!selected)return;const portion=$("portion").value,qty=Math.max(.25,Number($("quantity").value)||1),v=selected[portion==="unit"?"medium":portion];dayData().food.push({name:selected.name,portionLabel:portion==="unit"?"listed portion":portion,qty,meal:$("meal").value,cal:Math.round(v[0]*qty),protein:fmt(v[1]*qty),unit:selected.unit});save();render();$("selectedFood").classList.add("hidden");$("foodSearch").value="";searchFoods();selected=null;});
+$("cancelFood").addEventListener("click",()=>{$("selectedFood").classList.add("hidden");selected=null});
+$("addWater").addEventListener("click",()=>{dayData().water.push(Number($("cupSize").value));save();render()});
+$("undoWater").addEventListener("click",()=>{dayData().water.pop();save();render()});
+$("saveSteps").addEventListener("click",()=>{dayData().steps=Math.max(0,Number($("steps").value)||0);dayData().walk=$("walk").value.trim();save();render();alert("Movement saved for "+currentDay()+".")});
+$("saveWorkout").addEventListener("click",()=>{const name=$("workoutName").value.trim();if(!name){alert("Add a workout or activity name first.");return}dayData().workouts.push({name,minutes:Math.max(0,Number($("workoutMinutes").value)||0),effort:$("effort").value});$("workoutName").value="";$("workoutMinutes").value="";save();render()});
+$("saveProgress").addEventListener("click",()=>{const obj={id:String(Date.now()),date:currentDay(),weight:$("weight").value===""?"":Number($("weight").value),waist:$("waist").value===""?"":Number($("waist").value),hip:$("hip").value===""?"":Number($("hip").value),notes:$("notes").value.trim()};if(obj.weight===""&&obj.waist===""&&obj.hip===""&&!obj.notes){alert("Add at least one measurement or note.");return}state.progress=state.progress.filter(p=>!(p.date===obj.date));state.progress.push(obj);save();render();});
+$("saveGoals").addEventListener("click",()=>{state.goals={calories:Math.max(1000,Number($("calGoal").value)||2068),protein:Math.max(20,Number($("proteinGoal").value)||80)};save();render();alert("Targets saved.")});
+$("exportData").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="fitbestie-kenya-backup-"+todayISO()+".json";a.click();URL.revokeObjectURL(url);$("backupStatus").textContent="Backup exported. Keep it somewhere safe."});
+$("importFile").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!data||typeof data!=="object"||!data.logs||!data.goals)throw Error("Invalid backup");if(!confirm("Import this backup and replace the data currently in this tracker?"))return;state=data;save();render();$("backupStatus").textContent="Backup imported."}catch(err){alert("That file doesn't look like a FitBestie backup.")}e.target.value=""});
+$("clearData").addEventListener("click",()=>{if(confirm("Clear all FitBestie food logs, workouts and progress on this device? Export a backup first if you want to keep them.")){state={logs:{},goals:{calories:2068,protein:80},progress:[]};save();render()}});
+load();$("calGoal").value=state.goals.calories;$("proteinGoal").value=state.goals.protein;searchFoods();render();
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+</script>
+</body></html>
